@@ -7,6 +7,7 @@ public class PacManMove : MonoBehaviour
 {
     public float speed = 0.01f;
     public bool isCaught = false;
+    public Animator animator;
     Rigidbody2D rb;
 
     // Use this for initialization
@@ -19,6 +20,8 @@ public class PacManMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        animator.SetBool("Dead", isCaught);
+
         if (!isCaught)
         { 
             // Amount to move in each dimension
@@ -55,16 +58,15 @@ public class PacManMove : MonoBehaviour
 
             // Move by that amount
             rb.position += new Vector2(dx, dy);
-
-            void OnCollisionEnter2D(Collision2D col)
-            {
-                GameObject g = col.gameObject;
-                if (g.CompareTag("Enemy"))
-                {
-                    isCaught = true;
-                    Debug.Log(isCaught);
-                }
-            }
+        }
+    }
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        GameObject g = col.gameObject;
+        if (g.CompareTag("Enemy"))
+        {
+            isCaught = true;
+            Debug.Log("Caught");
         }
     }
 }

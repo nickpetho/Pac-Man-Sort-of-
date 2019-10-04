@@ -237,6 +237,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 0.01
   isCaught: 0
+  animator: {fileID: 38097018}
 --- !u!50 &38097022
 Rigidbody2D:
   serializedVersion: 4
@@ -2212,11 +2213,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0dc3149083f58f4bac8847bb17a8f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChaseTag: Player
-  HomeTag: Respwan
+  targetTag: Player
+  HomeTag: Respawn
   speed: 0.0075
   closeEnough: 0.01
   chasing: 1
+  respawning: 0
+  win: 0
+  animator: {fileID: 992438275}
 --- !u!50 &992438279
 Rigidbody2D:
   serializedVersion: 4

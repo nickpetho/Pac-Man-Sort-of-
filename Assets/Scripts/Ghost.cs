@@ -9,11 +9,14 @@ public class Ghost : MonoBehaviour
 
     Rigidbody2D rb; // Rigidbody physics component
 
-    public string ChaseTag = "Player";
-    public string HomeTag = "Respwan";
+    public string targetTag = "Player";
+    public string HomeTag = "Respawn";
     public float speed = 0.0075f;
     public float closeEnough = 0.01f;
     public bool chasing = true;
+    public bool respawning = false;
+    public bool win = false;
+    public Animator animator;
 
     void Start()
     {
@@ -24,88 +27,102 @@ public class Ghost : MonoBehaviour
     // Move towards location of target object
     void Update()
     {
-        if (chasing)
+        if (!win)
         {
-            // Get the target object with this tag
-            GameObject targetObject = GameObject.FindWithTag(ChaseTag);
-
-            // If object not found, this will be null. Exit to prevent error.
-            if (targetObject == null)
+            if (chasing && !respawning)
             {
-                return;
-            }
+                // Get the target object with this tag
+                GameObject targetObject = GameObject.FindWithTag(targetTag);
 
-            // Get its Rigidboy component so can get its position
-            Rigidbody2D targetRb = targetObject.GetComponent<Rigidbody2D>();
-
-            // Get difference between current and target location 
-            Vector2 delta = targetRb.position - rb.position;
-
-            // If close enough to target stop
-            if (delta.magnitude < closeEnough)
-            {
-                return;
-            }
-
-            // Normalize to 1 
-            delta.Normalize();
-
-            // Multiply be speed
-            delta = delta * speed;
-
-            // Use this to change position
-            rb.position += delta;
-
-            void OnTriggerEnter2D(Collider2D col)
-            {
-                GameObject g = col.gameObject;
-                if (g.CompareTag("Key"))
+                // If object not found, this will be null. Exit to prevent error.
+                if (targetObject == null)
                 {
-                    chasing = false;
+                    return;
                 }
-            }
-        }
 
-        if (!chasing)
-        {
-            // Get the target object with this tag
-            GameObject targetObject = GameObject.FindWithTag(ChaseTag);
+                // Get its Rigidboy component so can get its position
+                Rigidbody2D targetRb = targetObject.GetComponent<Rigidbody2D>();
 
-            // If object not found, this will be null. Exit to prevent error.
-            if (targetObject == null)
-            {
-                return;
-            }
+                // Get difference between current and target location 
+                Vector2 delta = targetRb.position - rb.position;
 
-            // Get its Rigidboy component so can get its position
-            Rigidbody2D targetRb = targetObject.GetComponent<Rigidbody2D>();
-
-            // Get difference between current and target location 
-            Vector2 delta = targetRb.position - rb.position;
-
-            // If close enough to target stop
-            if (delta.magnitude < closeEnough)
-            {
-                return;
-            }
-
-            // Normalize to 1 
-            delta.Normalize();
-
-            // Multiply be speed
-            delta = delta * speed;
-
-            // Use this to change position
-            rb.position += delta;
-
-            void OnCollisionEnter2D(Collider2D col)
-            {
-                GameObject g = col.gameObject;
-                if (g.CompareTag("Respwan"))
+                // If close enough to target stop
+                if (delta.magnitude < closeEnough)
                 {
-                    chasing = true;
+                    return;
                 }
+
+                // Normalize to 1 
+                delta.Normalize();
+
+                // Multiply be speed
+                delta = delta * speed;
+
+                // Use this to change position
+                rb.position += delta;
+            }
+
+            if (respawning && !chasing)
+            {
+                // Get the target object with this tag
+                GameObject targetObject = GameObject.FindWithTag(HomeTag);
+
+                // If object not found, this will be null. Exit to prevent error.
+                if (targetObject == null)
+                {
+                    return;
+                }
+
+                // Get its Rigidboy component so can get its position
+                Rigidbody2D targetRb = targetObject.GetComponent<Rigidbody2D>();
+
+                // Get difference between current and target location 
+                Vector2 delta = targetRb.position - rb.position;
+
+                // If close enough to target stop
+                if (delta.magnitude < closeEnough)
+                {
+                    return;
+                }
+
+                // Normalize to 1 
+                delta.Normalize();
+
+                // Multiply be speed
+                delta = delta * speed;
+
+                // Use this to change position
+                rb.position += delta;
             }
         }
     }
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        GameObject g = col.gameObject;
+        if (g.CompareTag("Key"))
+        {
+            chasing = false;
+            respawning = true;
+        }
+
+        if (g.CompareTag("Respawn"))
+        {
+            chasing = true;
+            respawning = false;
+        }
+
+        animator.SetBool("Dead", respawning);
+    }
+
+    void OnCollisionEnter2D(Collision2D col)
+    {
+        GameObject g = col.gameObject;
+        if (g.CompareTag("Player"))
+        {
+            chasing = false;
+            respawning = false;
+            win = true;
+        }
+    }
+    
 }
