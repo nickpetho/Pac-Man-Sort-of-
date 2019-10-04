@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ApplePickUp : MonoBehaviour
+public class KeyPickUp : MonoBehaviour
 {
     // Start is called before the first frame update
     void Start()
@@ -18,7 +18,7 @@ public class ApplePickUp : MonoBehaviour
     void OnTriggerEnter2D(Collider2D col)
     {
         GameObject g = col.gameObject;
-        if (g.CompareTag("Player"))
+        if (g.CompareTag("Enemy"))
         {
             Destroy(gameObject);
         }
